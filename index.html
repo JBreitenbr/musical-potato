@@ -22,9 +22,32 @@
       type="text/babel"
       data-presets="react"
       data-type="module"
-    >
+    > 
+      const { useState, useEffect } = React;k
       import { Footer } from './index.jsx';
-      ReactDOM.createRoot(document.getElementById('root')).render(<Footer />);
+      function App() {
+        let [data,setData]=useState([]);
+        let [artist,setArtist]=useState("Pentangle");
+        useEffect({
+          fetch(`https://juliascodingeckle.pythonanywhere/spotiApp/${artist}/`).then(
+                response=>{
+            if(!response.ok){
+              throw new Error("not ok");
+              return response.json();
+            }
+          }).then(data=>setData(data)).
+          catch(error=>console.error("There was an error"));
+        },[artist]);
+        return (
+          <div>
+            <h4>Items</h4>
+            <ul>
+              {data.map((item)=><li>{item.track}</li>}
+            </ul>
+          </div>
+        )
+      }
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
   </body>
 </html>
