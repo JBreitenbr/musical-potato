@@ -26,23 +26,22 @@
       const { useState, useEffect } = React;
       import { Footer } from './index.jsx';
       function App() {
-        let [data,setData]=useState([]);
+        let [tracks,setTracks]=useState([]);
         let [artist,setArtist]=useState("Pentangle");
-        useEffect(()=>{
-          fetch(`https://juliascodingeckle.pythonanywhere.com/spotiAPI/${artist}/`).then(
-                response=>{
-            if(!response.ok){
-              throw new Error("not ok");
-              return response.json();
-            }
-          }).then(data=>setData(data)).
-          catch(error=>console.error("There was an error"));
-        },[]);
+        useEffect(() => {
+          fetch(`https://juliascodingeckle.pythonanywhere.com/spotiAPI/${artist}/`) 
+          .then(response => {
+            if (!response.ok) throw new Error("Network response was not ok");
+            return response.json();
+           })
+          .then(data => setTracks(data))
+          .catch(error => console.error("Fetch error:", error));
+  }, [artist]);
         return (
           <div>
             <h4>Items</h4>
             <ul>
-              {data.map((item)=><li>{item.track}</li>)}
+              {tracks.map((item)=><li>{item.track}</li>)}
             </ul>
           </div>
         )
