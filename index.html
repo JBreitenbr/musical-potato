@@ -23,12 +23,12 @@
       data-presets="react"
       data-type="module"
     > 
-      const { useState, useEffect } = React;k
+      const { useState, useEffect } = React;
       import { Footer } from './index.jsx';
       function App() {
         let [data,setData]=useState([]);
         let [artist,setArtist]=useState("Pentangle");
-        useEffect({
+        useEffect(()=>{
           fetch(`https://juliascodingeckle.pythonanywhere/spotiApp/${artist}/`).then(
                 response=>{
             if(!response.ok){
