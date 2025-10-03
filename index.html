@@ -66,7 +66,7 @@
       <select className="mb-4 mx-8 sm:mx-32 sm:h-6 sm:text-xl bg-white" onChange={handleArtist}>
         <option>--Select Artist--</option>
         {bands.map(item=>
-          <option key={item} value={item}>{item} {countDict[item]?`(${countDict[item]})`:null}</option>
+          <option key={item} value={item}>{item}</option>
         )}</select>
             <ul>
               {tracks.map((item)=><li>{item.track}</li>)}
