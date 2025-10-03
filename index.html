@@ -23,23 +23,51 @@
       data-presets="react"
       data-type="module"
     > 
-      const { useState, useEffect } = React;
-      import { Footer } from './index.jsx';
-      function App() {
-        let [tracks,setTracks]=useState([]);
-        let [artist,setArtist]=useState("Pentangle");
-        useEffect(() => {
-          fetch(`https://juliascodingeckle.pythonanywhere.com/spotiAPI/${artist}/`) 
+  const { useState, useEffect } = React;
+  import { Footer } from './index.jsx';
+  function App() {
+     let [tracks,setTracks]=useState([]);
+     let [bands,setBands]=useState([]);
+     let letters="ABCDEFGHJKLMNOPQRSTUVWYZ".split("");
+     let [letter,setLetter]=useState("P");
+     let [artist,setArtist]=useState("Pentangle");
+     function handleLetter(e){
+        setLetter(e.target.value);
+      }
+     function handleArtist(e){
+        setArtist(e.target.value);
+     }
+     useEffect(() => {
+          fetch("https://juliascodingeckle.pythonanywhere.com/spotiAPI/bandsByLetter/") 
           .then(response => {
             if (!response.ok) throw new Error("Network response was not ok");
             return response.json();
            })
           .then(data => setTracks(data))
           .catch(error => console.error("Fetch error:", error));
-  }, [artist]);
+      }, [artist]);
+    useEffect(() => {
+          fetch(`https://juliascodingeckle.pythonanywhere.com/spotiAPI/${artist}/`) 
+          .then(response => {
+            if (!response.ok) throw new Error("Network response was not ok");
+            return response.json();
+           })
+          .then(data => setBands(data.filter((item)=>item.name==letter).map((item)=>item.bands.map((sub)=>sub.name)).flat();)
+          .catch(error => console.error("Fetch error:", error));
+      }, [letter]);
         return (
           <div>
-            <h4>Items</h4>
+            <h4>Items</h4>      
+            <select className="mb-2 mx-8 sm:mx-32 sm:h-6 sm:text-xl bg-white" onChange={handleLetter}>
+        <option>--Select Letter--</option>
+        {letters.map(item=>
+          <option key={item}>{item} </option>
+        )}</select>
+      <select className="mb-4 mx-8 sm:mx-32 sm:h-6 sm:text-xl bg-white" onChange={handleArtist}>
+        <option>--Select Artist--</option>
+        {bands.map(item=>
+          <option key={item} value={item}>{item} {countDict[item]?`(${countDict[item]})`:null}</option>
+        )}</select>
             <ul>
               {tracks.map((item)=><li>{item.track}</li>)}
             </ul>
