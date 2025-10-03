@@ -27,10 +27,10 @@
   import { Footer } from './index.jsx';
   function App() {
      let [tracks,setTracks]=useState([]);
-     let [bands,setBands]=useState(["Pentangle","Pink Floyd"]);
+     let [bands,setBands]=useState([]);
      let letters="ABCDEFGHJKLMNOPQRSTUVWYZ".split("");
-     let [letter,setLetter]=useState("P");
-     let [artist,setArtist]=useState("Pentangle");
+     let [letter,setLetter]=useState();
+     let [artist,setArtist]=useState("none");
      function handleLetter(e){
         setLetter(e.target.value);
       }
@@ -46,7 +46,7 @@
           .then(data => setTracks(data))
           .catch(error => console.error("Fetch error:", error));
       }, [artist]);
-    /*useEffect(() => {
+    useEffect(() => {
           fetch("https://juliascodingeckle.pythonanywhere.com/spotiAPI/bandsByLetter/") 
           .then(response => {
             if (!response.ok) throw new Error("Network response was not ok");
@@ -54,7 +54,7 @@
            })
           .then(data => setBands(data.filter((item)=>item.name==letter).map((item)=>item.bands.map((sub)=>sub.name)).flat();)
           .catch(error => console.error("Fetch error:", error));
-      }, [letter]);*/
+      }, [letter]);
         return (
           <div>
             <h4>Items</h4>      
