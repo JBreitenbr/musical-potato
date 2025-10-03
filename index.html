@@ -38,7 +38,7 @@
         setArtist(e.target.value);
      }
      useEffect(() => {
-          fetch("https://juliascodingeckle.pythonanywhere.com/spotiAPI/bandsByLetter/") 
+          fetch(`https://juliascodingeckle.pythonanywhere.com/spotiAPI/${artist}/`) 
           .then(response => {
             if (!response.ok) throw new Error("Network response was not ok");
             return response.json();
@@ -47,7 +47,7 @@
           .catch(error => console.error("Fetch error:", error));
       }, [artist]);
     useEffect(() => {
-          fetch(`https://juliascodingeckle.pythonanywhere.com/spotiAPI/${artist}/`) 
+          fetch("https://juliascodingeckle.pythonanywhere.com/spotiAPI/bandsByLetter/") 
           .then(response => {
             if (!response.ok) throw new Error("Network response was not ok");
             return response.json();
