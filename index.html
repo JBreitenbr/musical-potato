@@ -80,12 +80,7 @@
             <TrackList tracks={tracks} />*/}
                </div>
         {artist=="none"?<div className="spoti mt-7 sm:mt-36"></div>:<TrackList tracks={currentTracks} />}
-  <Pagination
-        tracksPerPage={tracksPerPage}
-        totalTracks={tracks.length}
-        setCurrentPage={setCurrentPage}
-        currentPage={currentPage}
-      />
+  <Pagination tracks={tracks} />
     </div> 
         )
       }
