@@ -13,7 +13,7 @@
       type="text/babel"
       src="index.jsx"
     ></script>
-    <!--<link rel="stylesheet" href="styles.css" />-->
+    <link rel="stylesheet" href="styles.css" />
   </head>
 
   <body>
@@ -25,7 +25,7 @@
       data-type="module"
     > 
   const { useState, useEffect } = React;
-  import { Footer } from './index.jsx';
+  import { Footer, TrackList } from './index.jsx';
   function App() {
      let [tracks,setTracks]=useState([]);
      let [bands,setBands]=useState([]);
@@ -57,8 +57,7 @@
           .catch(error => console.error("Fetch error:", error));
       }, [letter]);
         return (
-          <div>
-            <h4>Items</h4>      
+          <div>     
             <select className="mb-2 mx-8 sm:mx-32 sm:h-6 sm:text-xl bg-white" onChange={handleLetter}>
         <option>--Select Letter--</option>
         {letters.map(item=>
@@ -69,9 +68,10 @@
         {bands.map(item=>
           <option key={item} value={item}>{item}</option>
         )}</select>
-            <ul>
+            {/*<ul>
               {tracks.map((item)=><li><div><img src={item.album_pic}/><div>{item.track}</div></div></li>)}
-            </ul>
+            </ul>*/}
+            <TrackList tracks={tracks} />
           </div>
         )
       }
