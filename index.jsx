@@ -119,7 +119,7 @@ export const Pagination=({ tracks })=>{
       </div>
     </div>
   );
-}
+};
 
 export const Footer = () => {
   return (<footer><p>© Julia Breitenbruch</p>
