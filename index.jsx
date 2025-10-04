@@ -1,4 +1,4 @@
-const { useState, useEffect, useMemo } = React;
+//const { useState, useEffect, useMemo } = React;
 export const AlbumInfo=({item})=>{
 return (<div className="flex flex-row mx-2 mt-4 justify-center items-center" style={{maxWidth:"80vw"}}>
   <img src={item.album_pic} className="h-20 w-20 sm:h-28 sm:w-28 lg:h-32 lg:w-32 m-2"/>
