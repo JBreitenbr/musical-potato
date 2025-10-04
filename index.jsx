@@ -1,71 +1,3 @@
-export const DOTS = "...";
-const range = (start, end) => {
-  let length = end - start + 1;
-  return Array.from({ length }, (_, index) => index + start);
-};
-
-export const usePaginationRange = ({
-  totalPageCount,
-  buttonConst,
-  siblingCount,
-  currentPage,
-}) => {
-  const paginationRange = useMemo(() => {
-    // Pages count is determined as siblingCount + firstPage + lastPage + currentPage + 2*DOTS
-    const totalPageNumbers = buttonConst + 2 * siblingCount;
-
-    /*
-          If the number of pages is less than the page numbers we want to show in our
-          paginationComponent, we return the range [1..totalPageCount]
-        */
-    if (totalPageNumbers >= totalPageCount) {
-      return range(1, totalPageCount);
-    }
-
-    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-    const rightSiblingIndex = Math.min(
-      currentPage + siblingCount,
-      totalPageCount
-    );
-
-    /*
-          We do not want to show dots if there is only one position left 
-          after/before the left/right page count as that would lead to a change if our Pagination
-          component size which we do not want
-        */
-    const shouldShowLeftDots = leftSiblingIndex > 2;
-    const shouldShowRightDots = rightSiblingIndex <= totalPageCount - 2;
-
-    const firstPageIndex = 1;
-    const lastPageIndex = totalPageCount;
-
-    if (!shouldShowLeftDots && shouldShowRightDots) {
-      let leftItemCount = 3 + 2 * siblingCount;
-      let leftRange = range(1, leftItemCount);
-
-      return [...leftRange, DOTS, totalPageCount];
-    }
-
-    if (shouldShowLeftDots && !shouldShowRightDots) {
-      let rightItemCount = 3 + 2 * siblingCount;
-      let rightRange = range(
-        totalPageCount - rightItemCount + 1,
-        totalPageCount
-      );
-
-      return [firstPageIndex, DOTS, ...rightRange];
-    }
-
-    if (shouldShowLeftDots && shouldShowRightDots) {
-      let middleRange = range(leftSiblingIndex, rightSiblingIndex);
-      return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];
-    }
-  }, [totalPageCount, siblingCount, currentPage, buttonConst]);
-
-  return paginationRange;
-};
-export default usePaginationRange;
-
 export const AlbumInfo=({item})=>{
 return (<div className="flex flex-row mx-2 mt-4 justify-center items-center" style={{maxWidth:"80vw"}}>
   <img src={item.album_pic} className="h-20 w-20 sm:h-28 sm:w-28 lg:h-32 lg:w-32 m-2"/>
@@ -103,88 +35,91 @@ export const TrackList = ({ tracks }) => {
     </ul>
   );
 };
-export const Pagination = ({
-  tracksPerPage,
-  totalTracks,
-  setCurrentPage,
-  currentPage,
-}) => {
-  const pageNumbers = [];
 
-  for (let i = 1; i <= Math.ceil(totalTracks / tracksPerPage); i++) {
-    pageNumbers.push(i);
-  }
-  const paginate = (pageNumber, e) => {
-    e.preventDefault();
-    setCurrentPage(pageNumber);
-  };
+
+export default function Pagination({ tracks }) {
+  const pageSize = 10;   // Einträge pro Seite
+  const blockSize = 10;  // Seiten pro Block
+  const totalPages = Math.ceil(tracks.length / pageSize);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // 🔸 Reset auf Seite 1, wenn sich tracks ändern
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [tracks]);
+
+  const currentBlock = Math.floor((currentPage - 1) / blockSize);
+  const startPage = currentBlock * blockSize + 1;
+  const endPage = Math.min(startPage + blockSize - 1, totalPages);
+
+  const currentTracks = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return tracks.slice(start, start + pageSize);
+  }, [tracks, currentPage]);
+
+  const goToPage = (p) => setCurrentPage(p);
+  const goToPrevBlock = () =>
+    startPage > 1 && setCurrentPage(startPage - blockSize);
+  const goToNextBlock = () =>
+    endPage < totalPages && setCurrentPage(endPage + 1);
 
   return (
-    <nav className="mt-8 h-12 stuck">
-      <ul className="pagination grid grid-cols-10">
-        {pageNumbers.map((number) => (
-          <li
-            key={number}
-            className={`page-item ${currentPage === number ? "active" : ""}`} >
-            <a
-              onClick={(e) => paginate(number, e)}
-              href="!#"
-              className="page-link"
-            >
-              {number}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  )
-};
+    <div className="space-y-4">
+      {/* Liste der Tracks */}
+      {currentTracks.length === 0 ? (
+        <p className="text-gray-500">Keine Tracks gefunden.</p>
+      ) : (
+        <TrackList tracks={currentTracks}/>
+      )}
 
-export const Pagination2 = ({
-  tracksPerPage,
-  totalTracks,
-  setCurrentPage,
-  currentPage,
-}) => {
-  const pageNumbers = [];
-
-  for (let i = 1; i <= Math.ceil(totalTracks / tracksPerPage); i++) {
-    pageNumbers.push(i);
-  }
-  //let rnd=[1,0,3,3,3,3,1,1,0,3,3,3,1,1,0];
-let conv=(num,ind,nArr)=>nArr[ind]==DOTS && nArr[ind+1]==DOTS ? 9:num;
-//let newArr=rnd.map(conv).filter(num=>num!=9);
-  let pR=usePaginationRange({totalPageCount:pageNumbers.length,buttonConst:3,siblingCount:1,currentPage:currentPage});
-  let arr=pR.filter(item=>item!=DOTS);
-  const paginate = (pageNumber, e) => {
-    e.preventDefault();
-    setCurrentPage(pageNumber);
-  };
-/*let arr;
-  if(pageNumbers.length<7){
-    arr=pageNumbers;
-  } else { arr=pR;}*/
-  return (
-    <nav className="mt-8 h-12 stuck">
-      <ul className="pagination grid grid-cols-10">
-        {arr.map((item) => (
-    <li
-            key={item}
-            className={`page-item ${currentPage === item ? "active" : ""}`} style={{marginBottom:"5px"}}>
-            <button>
-            <a
-              onClick={(e) => paginate(item, e)}
-              href="!#"
-              className="page-link"
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex space-x-2 items-center">
+          {startPage > 1 && (
+            <button
+              onClick={goToPrevBlock}
+              className="px-3 py-1 bg-gray-200 rounded"
             >
-              {item}
-            </a></button>
-          </li>)
-        )}
-      </ul>
-    </nav>
+              &lt; {startPage - blockSize}–{startPage - 1}
+            </button>
+          )}
+
+          {Array.from(
+            { length: endPage - startPage + 1 },
+            (_, i) => startPage + i
+          ).map((p) => (
+            <button
+              key={p}
+              onClick={() => goToPage(p)}
+              className={`px-3 py-1 rounded ${
+                p === currentPage
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 hover:bg-gray-300"
+              }`}
+            >
+              {p}
+            </button>
+          ))}
+
+          {endPage < totalPages && (
+            <button
+              onClick={goToNextBlock}
+              className="px-3 py-1 bg-gray-200 rounded"
+            >
+              {endPage + 1}–
+              {Math.min(endPage + blockSize, totalPages)} &gt;
+            </button>
+          )}
+        </div>
+      )}
+
+      <div className="text-sm text-gray-500">
+        Seite {currentPage} von {totalPages}
+      </div>
+    </div>
   );
-};   
+}
 
 export const Footer = () => {
   return (<footer><p>© Julia Breitenbruch</p>
