@@ -26,6 +26,90 @@
     > 
   const { useState, useEffect, useMemo } = React;
   import { Footer, TrackList, Pagination} from './index.jsx';
+  
+  function NestedPagination({ tracks }){
+  const pageSize = 10;   // Einträge pro Seite
+  const blockSize = 10;  // Seiten pro Block
+  const totalPages = Math.ceil(tracks.length / pageSize);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // 🔸 Reset auf Seite 1, wenn sich tracks ändern
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [tracks]);
+
+  const currentBlock = Math.floor((currentPage - 1) / blockSize);
+  const startPage = currentBlock * blockSize + 1;
+  const endPage = Math.min(startPage + blockSize - 1, totalPages);
+
+  const currentTracks = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return tracks.slice(start, start + pageSize);
+  }, [tracks, currentPage]);
+
+  const goToPage = (p) => setCurrentPage(p);
+  const goToPrevBlock = () =>
+    startPage > 1 && setCurrentPage(startPage - blockSize);
+  const goToNextBlock = () =>
+    endPage < totalPages && setCurrentPage(endPage + 1);
+
+  return (
+    <div className="space-y-4">
+      {/* Liste der Tracks */}
+      {currentTracks.length === 0 ? (
+        <p className="text-gray-500">Keine Tracks gefunden.</p>
+      ) : (
+        <TrackList tracks={currentTracks}/>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex space-x-2 items-center">
+          {startPage > 1 && (
+            <button
+              onClick={goToPrevBlock}
+              className="px-3 py-1 bg-gray-200 rounded"
+            >
+              &lt; {startPage - blockSize}–{startPage - 1}
+            </button>
+          )}
+
+          {Array.from(
+            { length: endPage - startPage + 1 },
+            (_, i) => startPage + i
+          ).map((p) => (
+            <button
+              key={p}
+              onClick={() => goToPage(p)}
+              className={`px-3 py-1 rounded ${
+                p === currentPage
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 hover:bg-gray-300"
+              }`}
+            >
+              {p}
+            </button>
+          ))}
+
+          {endPage < totalPages && (
+            <button
+              onClick={goToNextBlock}
+              className="px-3 py-1 bg-gray-200 rounded"
+            >
+              {endPage + 1}–
+              {Math.min(endPage + blockSize, totalPages)} &gt;
+            </button>
+          )}
+        </div>
+      )}
+
+      <div className="text-sm text-gray-500">
+        Seite {currentPage} von {totalPages}
+      </div>
+    </div>
+  );
+};
   function App() {
      let [tracks,setTracks]=useState([]);
      let [currentPage, setCurrentPage] = useState(1);
@@ -79,7 +163,7 @@
             </ul>
             <TrackList tracks={tracks} />*/}
                </div>
-        {artist=="none"?<div className="spoti mt-7 sm:mt-36"></div>:<Pagination tracks={tracks} />}
+        {artist=="none"?<div className="spoti mt-7 sm:mt-36"></div>:<NestedPagination tracks={tracks} />}
     </div> 
         )
       }
