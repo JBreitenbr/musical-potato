@@ -24,10 +24,12 @@
       data-presets="react"
       data-type="module"
     > 
-  const { useState, useEffect } = React;
-  import { Footer, TrackList } from './index.jsx';
+  const { useState, useEffect, useMemo } = React;
+  import { Footer, TrackList, Pagination, Pagination2 } from './index.jsx';
   function App() {
      let [tracks,setTracks]=useState([]);
+     let [currentPage, setCurrentPage] = useState(1);
+     let [tracksPerPage,setTracksPerPage] = useState(8);
      let [bands,setBands]=useState([]);
      let letters="ABCDEFGHJKLMNOPQRSTUVWYZ".split("");
      let [letter,setLetter]=useState();
@@ -55,9 +57,13 @@
            })
           .then(data => setBands(data.filter((item)=>item.name==letter).map((item)=>item.bands.map((sub)=>sub.name)).flat()))
           .catch(error => console.error("Fetch error:", error));
-      }, [letter]);
+      }, [letter]);  const indexOfLastTrack = currentPage * tracksPerPage;
+  const indexOfFirstTrack = indexOfLastTrack - tracksPerPage;
+  const currentTracks = tracks.slice(indexOfFirstTrack, indexOfLastTrack);
         return (
-          <div>     
+     <div className="generale bg-slate-500" style={{position:"relative"}}>
+     <div className="bg-slate-300 flex flex-col" style={{position: "sticky",top:"0px",width:"100vw"}}>
+      <h3 className="text-white text-center text-xl h-12 pt-2 mb-6 bg" >My Own Private Spotify</h3>   
             <select className="mb-2 mx-8 sm:mx-32 sm:h-6 sm:text-xl bg-white" onChange={handleLetter}>
         <option>--Select Letter--</option>
         {letters.map(item=>
@@ -70,9 +76,17 @@
         )}</select>
             {/*<ul>
               {tracks.map((item)=><li><div><img src={item.album_pic}/><div>{item.track}</div></div></li>)}
-            </ul>*/}
-            <TrackList tracks={tracks} />
-          </div>
+            </ul>
+            <TrackList tracks={tracks} />*/}
+               </div>
+        {artist=="none"?<div className="spoti mt-7 sm:mt-36"></div>:<TrackList tracks={currentTracks} />}
+  {tracks.length<=80?   <Pagination
+        tracksPerPage={tracksPerPage}
+        totalTracks={tracks.length}
+        setCurrentPage={setCurrentPage}
+        currentPage={currentPage}
+      />:<Pagination2 tracksPerPage={tracksPerPage} totalTracks={tracks.length} setCurrentPage={setCurrentPage} currentPage={currentPage}/>}
+    </div> 
         )
       }
       ReactDOM.createRoot(document.getElementById('root')).render(<App />);
