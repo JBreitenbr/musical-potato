@@ -7,6 +7,7 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script
       data-plugins="transform-modules-umd"
       type="text/babel"
@@ -69,7 +70,7 @@
           <option key={item} value={item}>{item}</option>
         )}</select>
             <ul>
-              {tracks.map((item)=><li>{item.track}</li>)}
+              {tracks.map((item)=><li><div><img src={item.album_pic}/><div>{item.track}</div></div></li>)}
             </ul>
           </div>
         )
