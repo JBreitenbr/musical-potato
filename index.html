@@ -52,7 +52,7 @@
             if (!response.ok) throw new Error("Network response was not ok");
             return response.json();
            })
-          .then(data => setBands(data.filter((item)=>item.name==letter).map((item)=>item.bands.map((sub)=>sub.name)).flat();)
+          .then(data => setBands(data.filter((item)=>item.name==letter).map((item)=>item.bands.map((sub)=>sub.name)).flat()))
           .catch(error => console.error("Fetch error:", error));
       }, [letter]);
         return (
