@@ -37,7 +37,7 @@ export const TrackList = ({ tracks }) => {
 };
 
 
-export default function Pagination({ tracks }) {
+export const Pagination=({ tracks })=>{
   const pageSize = 10;   // Einträge pro Seite
   const blockSize = 10;  // Seiten pro Block
   const totalPages = Math.ceil(tracks.length / pageSize);
